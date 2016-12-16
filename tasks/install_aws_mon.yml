@@ -12,9 +12,9 @@
   when: get_script|changed
 
 - name: Create install directory
-  file: path={{cw_install_dir}} state=directory
+  file: path={{cw_install_dir | dirname}} state=directory
   when: get_script|changed
 
 - name: Move to install directory
-  command: cp /tmp/aws-scripts-mon {{cw_install_dir}}
+  command: cp -r /tmp/aws-scripts-mon {{cw_install_dir}}
   when: get_script|changed
