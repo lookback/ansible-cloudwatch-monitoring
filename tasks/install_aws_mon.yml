@@ -1,6 +1,6 @@
 ---
 - name: Download cloudwatch monitoring scripts
-  get_url: url={{cw_script_download_url}} dest=/tmp/CloudWatchMonitoringScripts.zip
+  get_url: url={{cw_script_download_url}} dest=/tmp/CloudWatchMonitoringScripts.zip force=yes
   register: get_script
 
 - name: Install unzip
