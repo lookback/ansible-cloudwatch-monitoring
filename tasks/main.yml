@@ -1,7 +1,7 @@
 ---
 # tasks file for cloudwatch-monitoring
 - name: "Install Perl dependencies needed by cloudwatch-monitoring script"
-  yum: name={{item}} state=present
+  yum: name={{item}} state={{cw_state}}
   when: ansible_os_family == "RedHat"
   with_items:
     - perl-Time-HiRes
@@ -16,10 +16,12 @@
 
 - name: "Install wrapper arround Perl script"
   template: src=templates/cw-put-instance-data.sh.j2 dest={{cw_install_dir}}/cw-put-instance-data.sh mode=755
+  when: cw_state == 'present'
 
 - name: "Verify script works"
   command: "/{{cw_install_dir}}/mon-put-instance-data.pl {{ cw_options }} --verify"
+  when: cw_state == 'present'
 
 - name: "Install cron command"
-  cron: name="CloudWatchMonitoringScripts" minute={{cw_cron_minute}} state=present job="{{cw_install_dir}}/cw-put-instance-data.sh" cron_file=cw-put-instance-data user=root
+  cron: name="CloudWatchMonitoringScripts" minute={{cw_cron_minute}} state={{cw_state}} job="{{cw_install_dir}}/cw-put-instance-data.sh" cron_file=cw-put-instance-data user=root
 

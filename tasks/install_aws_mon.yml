@@ -2,6 +2,7 @@
 - name: Download cloudwatch monitoring scripts
   get_url: url={{cw_script_download_url}} dest=/tmp/CloudWatchMonitoringScripts.zip force=yes
   register: get_script
+  when: cw_state == 'present'
 
 - name: Install unzip
   package: name=unzip state=present
@@ -13,8 +14,12 @@
 
 - name: Create install directory
   file: path={{cw_install_dir}} state=directory
-  when: get_script|changed
+  when: get_script|changed and cw_state == 'present'
+
+- name: Remove install directory
+  file: path={{cw_install_dir}} state=absent
+  when: cw_state == 'absent'
 
 - name: Move to install directory
   shell: cp -R /tmp/aws-scripts-mon/* {{cw_install_dir}}
-  when: get_script|changed
+  when: get_script|changed and cw_state == 'present'
